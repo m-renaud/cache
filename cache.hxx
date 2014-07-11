@@ -27,6 +27,12 @@ namespace mrr {
  *  @tparam Value
  *    The type of object to be stored in the cache and on disk (see #mapped_type).
  *
+ *  @tparam SerializationPolicy
+ *    The policy class to use when serializing objects to disk. This type must provide the
+ *    functions Serialize() and Deserialize(), see serialization_policies.hxx for details.
+ *  @tparam LoggingPolicy
+ *    The policy class that controls how log messages are displayed. This type must provide
+ *    the functions LogXyz, where Xyz is Trace, Debug, Info, Warn, Error, and EndLine.
  *  @tparam ConcurrencyPolicy
  *    The policy class to use when enforcing concurrency constraints. This type must provide
  *    the functions LockEntry(Key) and LockAll(), which each return a reference to a mutex that
@@ -37,14 +43,14 @@ namespace mrr {
 template <
 	typename Key,
 	typename Value,
-	typename LoggingPolicy = mrr::logging::policies::StdErr,
 	template <typename V> class SerializationPolicy = mrr::serialization::policies::OstreamOverload,
+	typename LoggingPolicy = mrr::logging::policies::StdErr,
 	template <typename K> class ConcurrencyPolicy = mrr::concurrency::policies::NoConcurrencyControl
 >
 class Cache
-	: public LoggingPolicy,
-	  public SerializationPolicy<Value>,
-	  public ConcurrencyPolicy<Key>
+	:  public SerializationPolicy<Value>,
+	   public LoggingPolicy,
+	   public ConcurrencyPolicy<Key>
 {
 public:
 	/** The type used to lookup a value in the cache, usually a unique identifier for the object.
