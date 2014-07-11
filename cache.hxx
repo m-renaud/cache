@@ -91,6 +91,9 @@ public:
 	using filename_function_type = std::function<std::string(key_type)>;
 
 
+	using iterator = std::shared_ptr<mapped_type>;
+
+
 public:
 	/** Default constructor for the cache, no operations performed */
 	Cache() = default;
@@ -120,6 +123,25 @@ public:
 		else
 			return m_cache[k] = loadFromDisk(k);
 	}
+
+
+	/** Find an object in the cache associated with the key **k**.
+	 *
+	 *  @param k
+	 *    The key of the object to retrieve.
+	 */
+	iterator find(key_type const& k)
+	{
+		std::lock_guard<EntryLockType> key_lock(this->LockEntry(k), std::adopt_lock);
+
+		auto iter = m_cache.find(k);
+
+		if (iter != m_cache.end())
+			return iter->second;
+		else
+			return m_cache[k] = loadFromDisk(k);
+	}
+
 
 	/** Sets the function that generates a unique filename given a #key_type for the cache.
 	 *
@@ -384,6 +406,18 @@ public:
 
 		if (iter != m_cache.end())
 			m_cache.erase(iter);
+	}
+
+	/** Return an iterator to the beginning of the cache. */
+	iterator begin() const
+	{
+		return std::shared_ptr<mapped_type>(nullptr);
+	}
+
+	/** Return an iterator to the end of the cache. */
+	iterator end() const
+	{
+		return std::shared_ptr<mapped_type>(nullptr);
 	}
 
 private:

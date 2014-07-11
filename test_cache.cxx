@@ -13,6 +13,8 @@ int main()
 	int idx;
 	std::string val;
 
+	c.insert(std::make_pair(1, "one"));
+
 	std::cout << "Enter idx, value pairs to save in the cache:\n";
 	while (std::cin >> idx && idx != -1)
 	{
@@ -23,13 +25,13 @@ int main()
 	std::cout << "Enter indexes to update and new value:\n";
 	while (std::cin >> idx >> val)
 	{
-		auto ptr = c[idx];
-		if (ptr != nullptr)
+		auto iter = c.find(idx);
+		if (iter != c.end())
 		{
-			std::cout << "Old value: " << *ptr << std::endl;
+			std::cout << "Old value: " << *iter << std::endl;
 
 			// This is not safe in a multi-threaded environment!!!
-			*ptr = val;
+			*iter = val;
 		}
 		else
 		{
