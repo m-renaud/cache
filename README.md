@@ -25,7 +25,9 @@ there are some slight differences that will be noted later.
 To create a basic cache object, just pass the key and value type as
 template arguments. For example:
 
+```cpp
     mrr::Cache<int, std::string> c;
+```
 
 Next, set the function which generates the filename to store the
 object, based on the key. This function is used whenever a new object
