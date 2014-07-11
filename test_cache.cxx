@@ -17,7 +17,7 @@ int main()
 	while (std::cin >> idx && idx != -1)
 	{
 		std::cin >> val;
-		c.create(idx, val);
+		c.insert(std::make_pair(idx, val));
 	}
 
 	std::cout << "Enter indexes to update and new value:\n";

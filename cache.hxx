@@ -61,6 +61,8 @@ public:
 	using mapped_type = Value;
 
 
+	using value_type = std::pair<const key_type, mapped_type>;
+
 	/** The type of mutex used to lock an individual entry in the cache.
 	 *
 	 *  This can be any class that satisfies the Mutex concept and is specified in the
@@ -143,17 +145,22 @@ public:
 	 *
 	 *  @retval true if the instance was successfully created.
 	 *  @retval false if the instance failed to be created.
+	 *
+	 *  @note This function is named insert() to correspond to the standard containers.
 	 */
-	bool create(key_type const& k, mapped_type const& v)
+	bool insert(value_type const& p)
 	{
-		std::lock_guard<EntryLockType> key_lock(this->LockEntry(k), std::adopt_lock);
+		key_type const& key = p.first;
+		mapped_type const& value = p.second;
 
-		std::string filename = m_filename_func(k);
+		std::lock_guard<EntryLockType> key_lock(this->LockEntry(key), std::adopt_lock);
+
+		std::string filename = m_filename_func(key);
 
 		// If the object already exists, something has gone wrong somewhere. keys should be unique.
 		if (fs::exists(filename))
 		{
-			this->LogError() << "Already exists: " << k << this->LogEndLine();
+			this->LogError() << "Already exists: " << key << this->LogEndLine();
 
 			return false;
 		}
@@ -171,10 +178,10 @@ public:
 
 		// Write the object to disk.
 		std::ofstream file_handle(filename);
-		this->Serialize(file_handle, v, "xml");
+		this->Serialize(file_handle, value, "xml");
 
 		// Refresh the cache entry.
-		refresh(k);
+		refresh(key);
 
 		this->LogInfo() << "Created at " << filename << this->LogEndLine();
 
