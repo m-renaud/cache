@@ -43,7 +43,7 @@ namespace mrr {
 template <
 	typename Key,
 	typename Value,
-	template <typename V> class SerializationPolicy = mrr::serialization::policies::OstreamOverload,
+	template <typename V> class SerializationPolicy = mrr::serialization::policies::IOStream,
 	typename LoggingPolicy = mrr::logging::policies::StdErr,
 	template <typename K> class ConcurrencyPolicy = mrr::concurrency::policies::NoConcurrencyControl
 >

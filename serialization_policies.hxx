@@ -21,7 +21,7 @@ namespace policies {
 
 
 template <typename T>
-class OstreamOverload
+class IOStream
 {
 public:
 	void Serialize(std::ofstream& os, T const& v, std::string const& format)
